@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'Filson Pro';
+    src: url('FilsonPro-Heavy.woff2') format('woff2'),
+        url('FilsonPro-Heavy.woff') format('woff');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Filson Pro';
+    src: url('FilsonPro-Book.woff2') format('woff2'),
+        url('FilsonPro-Book.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
