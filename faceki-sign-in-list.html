@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>FACEKI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, shrink-to-fit=no" />
+  <meta name="author" content="goodSide" />
+  <meta name="description" content="goodSide" />
+  <meta name="keywords" content="goodSide" />
+  <!--link font css-->
+  <link rel="stylesheet" type="text/css" href="request_assets/fonts/fonts.css" />
+  <!--link bootstarp css-->
+  <link rel="stylesheet" type="text/css" href="request_assets/css/bootstrap.min.css" />
+  <!--link style css-->
+  <link rel="stylesheet" type="text/css" href="request_assets/css/style.css" />
+  <style>
+    @media (max-width: 767px){
+      .page_loader{
+         margin-left: 17% !important;margin-top: 10% !important;
+      }
+    }
+    @media (min-width: 1000px){
+      .page_loader{
+         margin-left: 42% !important;margin-top: 10% !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <img class="page_loader" id="page_loader" style="display: none;" src="assets/img/icon/loader.gif">
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header" style="border-bottom: 0; padding-bottom: 5px;">
+          <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+        </div>
+        <div class="modal-body">
+          <div class="su_signup_item">
+            <div class="su_signup_heading">
+              <h1>Choose an account</h1>
+              <p>You have multi account registered with us.<br>Choose the one you want to sign-in with</p>
+            </div>
+            <div class="su_persoanl_details">
+              <form class="su_form_details" action="">
+                <ul class="su_choose_acount" id="user_table">
+                  <li>
+                    <a href="#">Name of user <span>myemail@gmail.com</span></a>
+                  </li>
+                  <li>
+                    <a href="#">Name of user <span>myemail@gmail.com</span></a>
+                  </li>
+                </ul>
+              </form>
+            </div>
+            <div class="su_button">
+              <a id="home_url" class="su_primary_button" target="_blank">None of them is mine</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--JS file-->
+  <script src="js/jquery-3.3.1.slim.min.js"></script>
+  <script src="request_assets/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript">
+    // $(window).on('load', function() {
+    //     $('#exampleModal').modal('show');
+    // });
+
+    $('#page_loader').show();
+
+    const BASE_API_URL = "https://apidev.facechain.org";
+    const pathUrl = window.location.pathname;
+    const baseUrl = window.location.origin+"/";
+    const pathUrlArray1 = pathUrl.split("/");
+    const pathUrlArray = pathUrlArray1.filter(function (el) {
+        return el != '';
+    });
+    pathUrlArray.pop();
+    const newPath=pathUrlArray.join("/");
+    document.getElementById('home_url').setAttribute("href", baseUrl+'/'+newPath); 
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const ids = urlParams.get('ids');
+
+    //alert(ids);
+
+    var url = BASE_API_URL+"/facelink/api/get-user-by-faceids"
+    var data =  new FormData();
+
+    data.append('face_ids',ids);
+
+    fetch(url, {
+            method: "POST",
+            headers: {
+            'Accept': 'application/json',
+        },
+        body: data
+        }).then(response=>{
+           return response.json()
+    })
+    .then(function(res){
+        var users=res.data.user;
+        var users_html='';
+        users.forEach(user=>{
+        //console.log('response_data2',user.name);
+        if(user.email!==''){
+         users_html+=`<li>
+                    <a href="`+baseUrl+'/'+newPath+'/faceki-sign-in-complete.html?id='+user.faceID+`">`+user.firstName+` `+user.lastName+`<span>`+user.email+`</span></a>
+                  </li>`;
+         }
+        });
+        document.getElementById('user_table').innerHTML = users_html;
+        $('#page_loader').hide();
+        $('#exampleModal').modal({backdrop: 'static', keyboard: false}); 
+        $('#exampleModal').modal('show');
+    }).catch(e=>{
+    console.log(e)
+    })
+
+  </script>
+</body>
+</html>
