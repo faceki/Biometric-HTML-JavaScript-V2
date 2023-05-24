@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://apidev.facechain.org";
+const API_BASE_URL = sessionStorage.getItem("API_BASE_URL");
 const pathUrl = window.location.pathname;
 const baseUrl = window.location.origin;
 const pathUrlArray1 = pathUrl.split("/");
@@ -80,44 +80,8 @@ function callApi(img_type){
     takeASnap(video2).then(blob =>{
        selfiepage.style.display = "none";
        const file = new File([blob], "filename.jpeg");
-       checkLiveness(file,type)
+       AuthenticateUser();
     });
-}
-
-const livenessurl = 'https://api.faceki.com/check_liveness';
-
-function checkLiveness(file,type) {
-    const data = new FormData();
-    data.append('key', file);
-    const req = new XMLHttpRequest();
-
-    req.open('POST', livenessurl, true);
-    req.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            let resp = JSON.parse(this.response)
-            if(resp && resp.score  /*&& resp.score>=0.50&& resp.quality>=0.60*/ && resp.probability>0.5 && resp.error==undefined){
-                AuthenticateUser()
-            }else if(resp && /*resp.score && resp.score<=0.50 &&*/ resp.probability<0.5 && resp.error==undefined){
-                showAlert("Please try again!!")
-            }else if(resp && resp.error_code=="FACE_CROPPED" && resp.error){
-                showAlert(resp.error+", Try Again!!")
-            }else if(resp && resp.error_code=="FACE_TOO_CLOSE" && resp.error){
-                showAlert(resp.error+",Please keep your face more closer to your camera, Try Again!!")
-            }else if(resp && resp.error_code=="FACE_NOT_FOUND" && resp.error){
-                showAlert(resp.error+",Please make sure face should be completely inside camera frame, Try Again!!")
-            }else if(resp && resp.error_code=="FACE_CLOSE_TO_BORDER" && resp.error){
-                showAlert(resp.error+", Try Again!!")
-            }else if(resp && resp.error_code=="FACE_TOO_SMALL" && resp.error){
-                showAlert(resp.error+", Try Again!!")
-            }else if(resp && resp.error_code=="UNKNOWN" && resp.error){
-                showAlert("Something went wrong!!")
-            }else{
-                console.log(resp)
-                showAlert("Image quality is not good, Make sure you are under proper lights, Try again!!")
-            }
-        }
-    };
-    req.send(data)
 }
 
 function showAlert(msg){
@@ -136,7 +100,6 @@ function resetCamUI(){
 }
 
 function AuthenticateUser(){
-    let api_url='http://localhost:3015';
     const urlParams = new URLSearchParams(window.location.search);
     const jwt_token = urlParams.get('auth');
     let type = urlParams.get('route');
@@ -149,11 +112,11 @@ function AuthenticateUser(){
 
     var url = API_BASE_URL+"/facelink/api/login";
     if(type == 'signup'){
-        data_auth.append('email', localStorage.getItem("email_id"));
+        data_auth.append('email', sessionStorage.getItem("email_id"));
         data_auth.append('password', '');
-        data_auth.append('phoneNumber', localStorage.getItem("mobile_number"));
-        data_auth.append('firstName', localStorage.getItem("firstname"));
-        data_auth.append('lastName', localStorage.getItem("lastname"));
+        data_auth.append('phoneNumber', sessionStorage.getItem("mobile_number"));
+        data_auth.append('firstName', sessionStorage.getItem("firstname"));
+        data_auth.append('lastName', sessionStorage.getItem("lastname"));
         url = API_BASE_URL+"/facelink/api/signup"
     }
     if(type == 'login'){

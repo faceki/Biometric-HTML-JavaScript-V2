@@ -8,8 +8,9 @@ const pathUrlArray = pathUrlArray1.filter(function (el) {
     return el != '';
 });
 var newPath=pathUrlArray.join("/");
-localStorage.setItem("client_id",client_id);
-localStorage.setItem("client_secret",client_secret);
+sessionStorage.setItem("client_id",client_id);
+sessionStorage.setItem("client_secret",client_secret);
+sessionStorage.setItem("API_BASE_URL",API_BASE_URL);
 function getToken(type){
     const API_URL = API_BASE_URL+"/auth/api/access-token?clientId="+client_id+"&clientSecret="+client_secret;
     fetch(API_URL, {
